@@ -1,13 +1,12 @@
-# string-matcher
+# calculate-string-similarity
 
 ## Overview
-string-matcher is a Node.js package for advanced string matching and comparison. It provides functionality for comparing strings with various options, including case sensitivity and order sensitivity.
+calculate-string-similarity is a Node.js package for advanced string matching and comparison. It provides functionality for comparing strings with various options, including case sensitivity and order sensitivity.
 
 ## Installation
-You can install string-matcher via npm:
+You can install calculate-string-similarity via npm:
 
 ```bash
-npm install string-matcher
 
 const { getSimilarity } = require('calculate-string-similarity');
 
