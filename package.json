@@ -1,0 +1,42 @@
+{
+  "name": "calculate-string-similarity",
+  "version": "1.0.0",
+  "description": "A Node.js package to calculate string similarity.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint .",
+    "prepublishOnly": "npm run lint"
+  },
+  "keywords": [
+    "string",
+    "similarity",
+    "algorithm"
+  ],
+  "author": {
+    "name": "Sushil Shaw",
+    "email": "Sushilprasad60649@gmail.com",
+    "url": "https://github.com/sushil2308"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JumpV/custom-string-similarity.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JumpV/custom-string-similarity/issues"
+  },
+  "homepage": "https://github.com/sushilshaw2308/custom-string-similarity#readme",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-node": "^11.1.0"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "rules": {}
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "private": false
+}
