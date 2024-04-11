@@ -16,7 +16,9 @@ npm install calculate-string-similarity
 
 You can install calculate-string-similarity via npm:
 
-## String Similarity Calculator
+## Features
+
+## 1. String Similarity Calculator
 
 ### Overview
 
@@ -50,7 +52,7 @@ console.log("Similarity:", similarity4); // Output: Similarity: 80
   - `caseSensitive`: A boolean indicating whether the comparison should be case-sensitive. Default is `true`.
   - `orderSensitive`: A boolean indicating whether the comparison should be order-sensitive. Default is `true`.
 
-## Array String Similarity Calculator
+## 2. Array String Similarity Calculator
 
 ### Overview
 
