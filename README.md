@@ -1,15 +1,25 @@
+Here's a revised version of your README file to make it more readable and organized:
+
+```markdown
 # calculate-string-similarity
-calculate-string-similarity is a Node.js package for advanced string matching and comparison. 
+
+calculate-string-similarity is a Node.js package for advanced string matching and comparison.
 
 ## Installation
+
 You can install calculate-string-similarity via npm:
 
-# String Similarity Calculator
-## Overview
-It provides functionality for comparing strings with various options, including case sensitivity and order sensitivity.
-
 ```bash
+npm install calculate-string-similarity
+```
 
+## String Similarity Calculator
+
+### Overview
+
+The `calculate-string-similarity` package provides functionality for comparing strings with various options, including case sensitivity and order sensitivity.
+
+```javascript
 const { getSimilarity } = require('calculate-string-similarity');
 
 // Example 1: Case-insensitive comparison
@@ -28,7 +38,8 @@ console.log("Similarity (case-insensitive, order-insensitive):", similarity3); /
 const similarity4 = getSimilarity("apple", "aple");
 console.log("Similarity:", similarity4); // Output: Similarity: 80
 ```
-## Parameters
+
+### Parameters
 
 - `string1`: The first string to compare.
 - `string2`: The second string to compare.
@@ -36,15 +47,11 @@ console.log("Similarity:", similarity4); // Output: Similarity: 80
   - `caseSensitive`: A boolean indicating whether the comparison should be case-sensitive. Default is `true`.
   - `orderSensitive`: A boolean indicating whether the comparison should be order-sensitive. Default is `true`.
 
+## Array String Similarity Calculator
 
-# Array String Similarity Calculator
-
-## Overview
+### Overview
 
 This package provides a utility function `getSimilarities` to calculate similarities between a given input string and an array of strings. It can be useful for various applications such as spell correction, autocomplete suggestions, and text analysis.
-
-
-## Usage
 
 ```javascript
 const { getSimilarities } = require('string-similarity-calculator');
@@ -63,7 +70,9 @@ console.log("Top 2 similar strings (ordered by string name in ascending order):"
 const similarities3 = getSimilarities(inputString, stringList, { threshold: 40, orderBy: 'similarity', order: 'descending' });
 console.log("All similar strings (ordered by similarity percentage in descending order):", similarities3);
 ```
-## Parameters
+
+### Parameters
+
 - `inputString`: The input string for which similarities need to be calculated.
 - `stringList`: An array of strings against which the similarity of the input string will be calculated.
 - `options`: An optional object containing additional parameters:
@@ -71,3 +80,4 @@ console.log("All similar strings (ordered by similarity percentage in descending
   - `orderBy`: The parameter to order the results by, either `'similarity'` or `'name'`. Default is `'similarity'`.
   - `order`: The order in which to sort the results, either `'ascending'` or `'descending'`. Default is `'descending'`.
   - `numberOfOutputs`: The number of top similarity results to return. Default is `Infinity`.
+```
