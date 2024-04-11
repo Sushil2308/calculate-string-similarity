@@ -79,7 +79,7 @@ const getSimilarities = (a, bArray, options = {}) => {
     threshold = 0,
     orderBy = "similarity",
     order = "descending",
-    numberOfOutputs = Infinity,
+    numberOfOutputs = 10,
     ...otherOptions
   } = options;
 
