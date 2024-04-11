@@ -16,7 +16,7 @@ npm install calculate-string-similarity
 
 You can install calculate-string-similarity via npm:
 
-## Features
+## Features:
 
 ## 1. String Similarity Calculator
 
