@@ -1,6 +1,6 @@
 {
   "name": "calculate-string-similarity",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A Node.js package to calculate string similarity.",
   "main": "index.js",
   "scripts": {
@@ -10,8 +10,24 @@
   },
   "keywords": [
     "string",
+    "matching",
+    "comparison",
     "similarity",
-    "algorithm"
+    "algorithm",
+    "node",
+    "node.js",
+    "npm",
+    "package",
+    "library",
+    "util",
+    "utility",
+    "tool",
+    "spell correction",
+    "autocomplete",
+    "text analysis",
+    "fuzzy matching",
+    "case sensitivity",
+    "order sensitivity"
   ],
   "author": {
     "name": "Sushil Shaw",
