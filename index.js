@@ -24,7 +24,22 @@ const precomputeMatrix = (maxLenA, maxLenB) => {
 
 // Define the function for calculating string similarity
 const getSimilarity = (a, b, options = {}) => {
-  const { caseSensitive = false, orderSensitive = true } = options;
+  const { caseSensitive = false, orderSensitive = false } = options;
+
+  // Error handling for missing input strings
+  if (!a || !b) {
+    throw new Error("Input strings are required.");
+  }
+
+  // Validate input parameters
+  if (
+    typeof a !== "string" ||
+    typeof b !== "string" ||
+    typeof caseSensitive !== "boolean" ||
+    typeof orderSensitive !== "boolean"
+  ) {
+    throw new TypeError("Invalid input parameters.");
+  }
 
   if (!caseSensitive) {
     a = a.toLowerCase();
@@ -45,11 +60,8 @@ const getSimilarity = (a, b, options = {}) => {
         matrix[i][j] = matrix[i - 1][j - 1];
       } else {
         matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1, // substitution
-          Math.min(
-            matrix[i][j - 1] + 1, // insertion
-            matrix[i - 1][j] + 1
-          ) // deletion
+          matrix[i - 1][j - 1] + 1,
+          Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
         );
       }
     }
@@ -74,43 +86,85 @@ const getSimilarity = (a, b, options = {}) => {
 
 // Define the function for calculating similarity between a string and a multiple strings
 const getSimilarities = (a, bArray, options = {}) => {
-  // Default options
   const {
-    threshold = 0,
-    orderBy = "similarity",
-    order = "descending",
-    numberOfOutputs = 10,
-    ...otherOptions
+    threshold = 0.5 * 100,
+    orderBy = null,
+    order = null,
+    numberOfOutputs = null,
+    caseSensitive = false,
+    orderSensitive = false,
   } = options;
 
+  // Error handling for missing input strings
+  if (!a || !bArray) {
+    throw new Error("Input strings are required.");
+  }
+
+  // Validate input parameters
+  if (
+    typeof a !== "string" ||
+    typeof bArray !== "object" ||
+    typeof caseSensitive !== "boolean" ||
+    typeof orderSensitive !== "boolean"
+  ) {
+    throw new TypeError("Invalid input parameters.");
+  }
+  if (
+    (orderBy && typeof orderBy != "string") ||
+    !["similarity", "string"].includes(orderBy)
+  ) {
+    throw new TypeError("Invalid order on parameters.");
+  }
+  if (order && typeof order != "string") {
+    throw new TypeError("Invalid order type by parameters.");
+  }
+  if (numberOfOutputs && typeof numberOfOutputs != "number") {
+    throw new TypeError("Invalid numberOfOutputs parameters.");
+  }
+  if (threshold < 0 || threshold > 100) {
+    throw new RangeError("Threshold must be between 0 and 100.");
+  }
+
   // Calculate similarity for each string in the array
-  const similarities = bArray.map((b) => ({
+  let similarities = bArray.map((b) => ({
     Input: b,
-    Similarity: getSimilarity(a, b, otherOptions),
+    Similarity: b
+      ? getSimilarity(a, b, {
+          caseSensitive: caseSensitive,
+          orderSensitive: orderSensitive,
+        })
+      : 0,
   }));
 
   // Filter similarities below threshold
-  const filteredSimilarities = similarities.filter(
-    ({ Similarity }) => Similarity >= threshold
-  );
+  if (threshold) {
+    similarities = similarities.filter(
+      ({ Similarity }) => Similarity >= threshold
+    );
+  } else {
+    return [];
+  }
 
   // Sort the filtered similarities based on orderBy and order options
-  const sortedSimilarities = filteredSimilarities.sort((a, b) => {
-    if (orderBy === "similarity") {
-      return order === "ascending"
-        ? a.Similarity - b.Similarity
-        : b.Similarity - a.Similarity;
-    } else if (orderBy === "name") {
-      return order === "ascending"
-        ? a.Input.localeCompare(b.Input)
-        : b.Input.localeCompare(a.Input);
-    }
-  });
+  if (orderBy && order) {
+    similarities = similarities.sort((a, b) => {
+      if (orderBy === "similarity") {
+        return order === "ascending"
+          ? a.Similarity - b.Similarity
+          : b.Similarity - a.Similarity;
+      } else if (orderBy === "string") {
+        return order === "ascending"
+          ? a.Input.localeCompare(b.Input)
+          : b.Input.localeCompare(a.Input);
+      }
+    });
+  }
 
   // Get the specified number of top similarity results
-  const topSimilarities = sortedSimilarities.slice(0, numberOfOutputs);
-
-  return topSimilarities;
+  if (numberOfOutputs) {
+    similarities = similarities.slice(0, numberOfOutputs);
+  }
+  return similarities;
 };
 
 // Export the functions for use in other files

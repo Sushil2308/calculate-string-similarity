@@ -59,7 +59,7 @@ console.log("Similarity:", similarity4); // Output: Similarity: 80
 This package provides a utility function `getSimilarities` to calculate similarities between a given input string and an array of strings. It can be useful for various applications such as spell correction, autocomplete suggestions, and text analysis.
 
 ```javascript
-const { getSimilarities } = require('string-similarity-calculator');
+const { getSimilarities } = require('calculate-string-similarity');
 const inputString = "apple";
 const stringList = ["appl", "apricot", "orange", "banana", "pineapple"];
 
