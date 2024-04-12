@@ -63,15 +63,15 @@ const { getSimilarities } = require('calculate-string-similarity');
 const inputString = "apple";
 const stringList = ["appl", "apricot", "orange", "banana", "pineapple"];
 
-// Example 1: Get top 3 similar strings with similarity percentage above 50% and order by similarity in descending order
+// Example 1: Get top 3 similar strings with similarity percentage equals to below 50% and order by similarity in descending order
 const similarities1 = getSimilarities(inputString, stringList, { threshold: 50, orderBy: 'similarity', order: 'descending', numberOfOutputs: 3 });
 console.log("Top 3 similar strings (ordered by similarity percentage in descending order):", similarities1);
 
-// Example 2: Get top 2 similar strings with similarity percentage above 60% and order by string name in ascending order
+// Example 2: Get top 2 similar strings with similarity percentage equals to below 60% and order by string name in ascending order
 const similarities2 = getSimilarities(inputString, stringList, { threshold: 60, orderBy: 'name', order: 'ascending', numberOfOutputs: 2 });
 console.log("Top 2 similar strings (ordered by string name in ascending order):", similarities2);
 
-// Example 3: Get all similar strings with similarity percentage above 40% and order by similarity in descending order
+// Example 3: Get all similar strings with similarity percentage equals to below 40% and order by similarity in descending order
 const similarities3 = getSimilarities(inputString, stringList, { threshold: 40, orderBy: 'similarity', order: 'descending' });
 console.log("All similar strings (ordered by similarity percentage in descending order):", similarities3);
 ```
