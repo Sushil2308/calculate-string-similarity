@@ -27,21 +27,37 @@ The `calculate-string-similarity` package provides functionality for comparing s
 ```javascript
 const { getSimilarity } = require('calculate-string-similarity');
 
-// Example 1: Case-insensitive comparison
-const similarity1 = getSimilarity("hello", "HELLO", { caseSensitive: false });
-console.log("Similarity (case-insensitive):", similarity1); // Output: Similarity (case-insensitive): 100
+console.log("Test cases for getSimilarity function:");
+console.log("----------------------------------------");
 
-// Example 2: Case-sensitive and order-sensitive comparison
-const similarity2 = getSimilarity("hello", "holle", { caseSensitive: true, orderSensitive: true });
-console.log("Similarity (case-sensitive, order-sensitive):", similarity2); // Output: Similarity (case-sensitive, order-sensitive): 60
+// Test case 1: Case-sensitive and order-sensitive comparison with identical strings
+console.log("Test case 1:", getSimilarity("hello", "hello")); // Expected output: 100
 
-// Example 3: Case-insensitive and order-insensitive comparison
-const similarity3 = getSimilarity("hello", "holle", { caseSensitive: false, orderSensitive: false });
-console.log("Similarity (case-insensitive, order-insensitive):", similarity3); // Output: Similarity (case-insensitive, order-insensitive): 100
+// Test case 2: Case-insensitive comparison with identical strings
+console.log("Test case 2:", getSimilarity("hello", "HELLO", { caseSensitive: false })); // Expected output: 100
 
-// Example 4: Custom strings
-const similarity4 = getSimilarity("apple", "aple");
-console.log("Similarity:", similarity4); // Output: Similarity: 80
+// Test case 3: Case-sensitive and order-sensitive comparison with different strings
+console.log("Test case 3:", getSimilarity("hello", "holle", { caseSensitive: true, orderSensitive: true })); // Expected output: 60
+
+// Test case 4: Case-insensitive and order-insensitive comparison with partially different strings
+console.log("Test case 4:", getSimilarity("hello", "holle", { caseSensitive: false, orderSensitive: false })); // Expected output: 100
+
+// Test case 5: Custom strings with partial similarity
+console.log("Test case 5:", getSimilarity("apple", "aple")); // Expected output: 80
+
+// Test case 6: Null input strings
+try {
+  getSimilarity(null, "HELLO", { caseSensitive: false });
+} catch (error) {
+  console.log("Test case 6:", error.message); // Expected output: "Input strings are required."
+}
+
+// Test case 7: Invalid input parameters
+try {
+  getSimilarity("hello", "HELLO", { caseSensitive: "false" });
+} catch (error) {
+  console.log("Test case 7:", error.message); // Expected output: "Invalid input parameters."
+}
 ```
 
 ### Parameters
@@ -63,17 +79,55 @@ const { getSimilarities } = require('calculate-string-similarity');
 const inputString = "apple";
 const stringList = ["appl", "apricot", "orange", "banana", "pineapple"];
 
-// Example 1: Get top 3 similar strings with similarity percentage equals to below 50% and order by similarity in descending order
-const similarities1 = getSimilarities(inputString, stringList, { threshold: 50, orderBy: 'similarity', order: 'descending', numberOfOutputs: 3 });
-console.log("Top 3 similar strings (ordered by similarity percentage in descending order):", similarities1);
+console.log("Test cases for getSimilarities function:");
+console.log("------------------------------------------");
 
-// Example 2: Get top 2 similar strings with similarity percentage equals to below 60% and order by string name in ascending order
-const similarities2 = getSimilarities(inputString, stringList, { threshold: 60, orderBy: 'name', order: 'ascending', numberOfOutputs: 2 });
-console.log("Top 2 similar strings (ordered by string name in ascending order):", similarities2);
+// Test case 8: Case-sensitive and order-sensitive comparison with custom threshold and ordering
+console.log("Test case 11:", getSimilarities("apple", ["aple", "banana", "orange"], { caseSensitive: true, orderSensitive: true, threshold: 30, thresholdType: '>=', orderBy: 'similarity', order: 'ascending', numberOfOutputs: 2 }));
+// Expected output: [{ Input: 'aple', Similarity: 80 }, { Input: 'banana', Similarity: 0 }]
 
-// Example 3: Get all similar strings with similarity percentage equals to below 40% and order by similarity in descending order
-const similarities3 = getSimilarities(inputString, stringList, { threshold: 40, orderBy: 'similarity', order: 'descending' });
-console.log("All similar strings (ordered by similarity percentage in descending order):", similarities3);
+// Test case 9: Case-insensitive comparison with custom threshold and ordering
+console.log("Test case 12:", getSimilarities("apple", ["aple", "banana", "orange"], { caseSensitive: false, threshold: 60, thresholdType: '<=', orderBy: 'string', order: 'descending' }));
+// Expected output: [{ Input: 'orange', Similarity: 0 }, { Input: 'aple', Similarity: 80 }]
+
+// Test case 10: Default behavior with order-insensitive comparison and custom threshold
+console.log("Test case 13:", getSimilarities("apple", ["aple", "banana", "orange"], { orderSensitive: false, threshold: 70, thresholdType: '>' }));
+// Expected output: [{ Input: 'aple', Similarity: 80 }]
+
+// Test case 11: Null input strings
+try {
+  getSimilarities(null, ["aple", "banana", "orange"], { caseSensitive: false });
+} catch (error) {
+  console.log("Test case 14:", error.message); // Expected output: "Input strings are required."
+}
+
+// Test case 12: Invalid input parameters
+try {
+  getSimilarities("apple", ["aple", "banana", "orange"], { caseSensitive: "false" });
+} catch (error) {
+  console.log("Test case 15:", error.message); // Expected output: "Invalid input parameters."
+}
+// Test case 13: Case-insensitive comparison with custom threshold and ordering
+console.log("Test case 12:", getSimilarities("apple", ["aple", "banana", "orange"], { caseSensitive: false, threshold: 60, thresholdType: '<=', orderBy: 'string', order: 'descending' }));
+// Expected output: [{ Input: 'orange', Similarity: 0 }, { Input: 'aple', Similarity: 80 }]
+
+// Test case 14: Default behavior with order-insensitive comparison and custom threshold
+console.log("Test case 13:", getSimilarities("apple", ["aple", "banana", "orange"], { orderSensitive: false, threshold: 70, thresholdType: '>' }));
+// Expected output: [{ Input: 'aple', Similarity: 80 }]
+
+// Test case 15: Null input strings
+try {
+  getSimilarities(null, ["aple", "banana", "orange"], { caseSensitive: false });
+} catch (error) {
+  console.log("Test case 14:", error.message); // Expected output: "Input strings are required."
+}
+
+// Test case 16: Invalid input parameters
+try {
+  getSimilarities("apple", ["aple", "banana", "orange"], { caseSensitive: "false" });
+} catch (error) {
+  console.log("Test case 15:", error.message); // Expected output: "Invalid input parameters."
+}
 ```
 
 ### Parameters
@@ -82,6 +136,7 @@ console.log("All similar strings (ordered by similarity percentage in descending
 - `stringList`: An array of strings against which the similarity of the input string will be calculated.
 - `options`: An optional object containing additional parameters:
   - `threshold`: The minimum similarity percentage required for a string to be considered similar. Default is `0`.
+  - `thresholdType`: The type of threshold comparison to be applied for similarity percentage. It determines whether the similarity percentage should be greater than (`>`), greater than or equal to (`>=`), less than (`<`), or less than or equal to (`<=`) the specified threshold value. Default is `>`.
   - `orderBy`: The parameter to order the results by, either `'similarity'` or `'name'`. Default is `'similarity'`.
   - `order`: The order in which to sort the results, either `'ascending'` or `'descending'`. Default is `'descending'`.
   - `numberOfOutputs`: The number of top similarity results to return. Default is `Infinity`.

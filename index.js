@@ -1,93 +1,136 @@
-// index.js
 
-// Precompute the Levenshtein distance matrix
-const precomputeMatrix = (maxLenA, maxLenB) => {
-  const matrix = [];
+const calculateInSensitiveOrder= (a, b) => {
+    try {
+        const setA = new Set(a);
+    const setB = new Set(b);
 
-  // Initialize the first row
-  matrix[0] = Array.from({ length: maxLenA + 1 }, (_, j) => j);
-
-  // Initialize the first column
-  for (let i = 1; i <= maxLenB; i++) {
-    matrix[i] = [i];
-  }
-
-  // Fill in the rest of the matrix
-  for (let i = 1; i <= maxLenB; i++) {
-    for (let j = 1; j <= maxLenA; j++) {
-      matrix[i][j] = 0; // Pre-initialized to 0 for static approach
+        // Calculate the size of the intersection
+    let intersectionSize = 0;
+    for (const char of setA) {
+        if (setB.has(char)) {
+            intersectionSize++;
+        }
     }
-  }
+    // Calculate similarity percentage based on the size of intersection and union
+    const unionSize = setA.size + setB.size - intersectionSize;
+    const similarityPercentage = (intersectionSize / unionSize) * 100;
 
-  return matrix;
+    return similarityPercentage;
+    } catch (error) {
+        return 0
+    }
+    
 };
 
-// Define the function for calculating string similarity
 const getSimilarity = (a, b, options = {}) => {
-  const { caseSensitive = false, orderSensitive = false } = options;
+    const { caseSensitive = false, orderSensitive = true } = options;
 
-  // Error handling for missing input strings
-  if (!a || !b) {
-    throw new Error("Input strings are required.");
-  }
+    // Error handling for missing input strings
+    if (a===null || b===null || a===undefined || b===undefined) {
+      throw new Error("Input strings are required.");
+    }
+  
+    // Validate input parameters
+    if (
+      typeof a !== "string" ||
+      typeof b !== "string" ||
+      typeof caseSensitive !== "boolean" ||
+      typeof orderSensitive !== "boolean"
+    ) {
+      throw new TypeError("Invalid input parameters.");
+    }
+  
+    if (!caseSensitive) {
+      a = a.toLowerCase();
+      b = b.toLowerCase();
+    }
+  
+    // Get the lengths of the input strings
+    const lenA = a.length;
+    const lenB = b.length;
+  
+    // Handle edge cases
+    if (lenA === 0) return lenB === 0 ? 100 : 0;
+    if (lenB === 0) return 0;
 
-  // Validate input parameters
-  if (
-    typeof a !== "string" ||
-    typeof b !== "string" ||
-    typeof caseSensitive !== "boolean" ||
-    typeof orderSensitive !== "boolean"
-  ) {
-    throw new TypeError("Invalid input parameters.");
-  }
-
-  if (!caseSensitive) {
-    a = a.toLowerCase();
-    b = b.toLowerCase();
-  }
-
-  // Get the lengths of the input strings
-  const lenA = a.length;
-  const lenB = b.length;
-
-  // Precompute the matrix
-  const matrix = precomputeMatrix(lenA, lenB);
-
-  // Fill the matrix with Levenshtein distance
-  for (let i = 1; i <= lenB; i++) {
-    for (let j = 1; j <= lenA; j++) {
-      if (b.charAt(i - 1) === a.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
-        );
+    // Calculate similarity based on options
+    let similarityPercentage;
+    if (!orderSensitive) {
+      return calculateInSensitiveOrder(a, b);
+    } else {
+      // Initialize the Levenshtein distance matrix
+      let prevRow = Array.from({ length: lenA + 1 }, (_, i) => i);
+      for (let i = 1; i <= lenB; i++) {
+        let currRow = [i];
+        for (let j = 1; j <= lenA; j++) {
+          const substitutionCost = a[j - 1] === b[i - 1] ? 0 : 1;
+          currRow[j] = Math.min(
+            prevRow[j - 1] + substitutionCost,
+            currRow[j - 1] + 1,
+            prevRow[j] + 1
+          );
+        }
+        prevRow = currRow;
+      }
+    
+      // Calculate similarity percentage based on Levenshtein distance
+      const distance = prevRow[lenA];
+      const maxLength = Math.max(lenA, lenB);
+      similarityPercentage = 1 - distance / maxLength;
+      if (similarityPercentage < 0) {
+        similarityPercentage = 0; // Clamp similarity percentage to minimum of 0
       }
     }
-  }
 
-  // Calculate the distance and maximum length of strings
-  const distance = matrix[lenB][lenA];
-  const maxLength = Math.max(lenA, lenB);
-
-  // Calculate similarity percentage based on options
-  let similarityPercentage;
-  if (orderSensitive) {
-    similarityPercentage = 1 - distance / maxLength;
-  } else {
-    similarityPercentage = 1 - distance / maxLength;
-    if (similarityPercentage < 0) similarityPercentage = 0;
-  }
-
-  // Return similarity percentage
-  return similarityPercentage * 100;
+    // Return similarity percentage
+    return similarityPercentage * 100;
 };
+
+const getFilterOnCondition = (similarities, condition, threshold) => {
+    switch (condition) {
+        case '>':
+            return similarities.filter(
+                ({ Similarity }) => Similarity > threshold
+              );
+        case '<':
+            return similarities.filter(
+                ({ Similarity }) => Similarity < threshold
+              );
+        case '>=':
+            return similarities.filter(
+                ({ Similarity }) => Similarity >= threshold
+              );
+        case '<=':
+            return similarities.filter(
+                ({ Similarity }) => Similarity <= threshold
+              );
+        default:
+            return similarities;
+    }
+};
+const sortSimilarities = (similarities, orderBy, order) => {
+    if (!orderBy || !order) {
+        return similarities; // No sorting required
+    }
+
+    return similarities.sort((a, b) => {
+        switch (orderBy) {
+            case 'similarity':
+                return order === 'ascending' ? a.Similarity - b.Similarity : b.Similarity - a.Similarity;
+            case 'string':
+                return order === 'ascending' ? a.Input.localeCompare(b.Input) : b.Input.localeCompare(a.Input);
+            default:
+                return 0; // No sorting
+        }
+    });
+};
+
 
 // Define the function for calculating similarity between a string and a multiple strings
 const getSimilarities = (a, bArray, options = {}) => {
   const {
-    threshold = 0.5 * 100,
+    threshold = 50,
+    thresholdType = ">",
     orderBy = null,
     order = null,
     numberOfOutputs = null,
@@ -96,7 +139,7 @@ const getSimilarities = (a, bArray, options = {}) => {
   } = options;
 
   // Error handling for missing input strings
-  if (!a || !bArray) {
+  if (a===null || a===undefined || !bArray) {
     throw new Error("Input strings are required.");
   }
 
@@ -110,8 +153,8 @@ const getSimilarities = (a, bArray, options = {}) => {
     throw new TypeError("Invalid input parameters.");
   }
   if (
-    (orderBy && typeof orderBy != "string") ||
-    !["similarity", "string"].includes(orderBy)
+    orderBy && (typeof orderBy != "string" ||
+    !["similarity", "string"].includes(orderBy))
   ) {
     throw new TypeError("Invalid order on parameters.");
   }
@@ -124,11 +167,14 @@ const getSimilarities = (a, bArray, options = {}) => {
   if (threshold < 0 || threshold > 100) {
     throw new RangeError("Threshold must be between 0 and 100.");
   }
+  if (!["<",">","<=",">="].includes(thresholdType)){
+    throw new RangeError(`Threshold Type must be amongst <, >, <=, or ,>=.`);
+  }
 
   // Calculate similarity for each string in the array
   let similarities = bArray.map((b) => ({
     Input: b,
-    Similarity: b
+    Similarity: b!==null || a!==undefined
       ? getSimilarity(a, b, {
           caseSensitive: caseSensitive,
           orderSensitive: orderSensitive,
@@ -138,27 +184,13 @@ const getSimilarities = (a, bArray, options = {}) => {
 
   // Filter similarities below threshold
   if (threshold) {
-    similarities = similarities.filter(
-      ({ Similarity }) => Similarity >= threshold
-    );
+    similarities = getFilterOnCondition(similarities, thresholdType, threshold)
   } else {
     return [];
   }
 
   // Sort the filtered similarities based on orderBy and order options
-  if (orderBy && order) {
-    similarities = similarities.sort((a, b) => {
-      if (orderBy === "similarity") {
-        return order === "ascending"
-          ? a.Similarity - b.Similarity
-          : b.Similarity - a.Similarity;
-      } else if (orderBy === "string") {
-        return order === "ascending"
-          ? a.Input.localeCompare(b.Input)
-          : b.Input.localeCompare(a.Input);
-      }
-    });
-  }
+  similarities = sortSimilarities(similarities, orderBy, order)
 
   // Get the specified number of top similarity results
   if (numberOfOutputs) {
